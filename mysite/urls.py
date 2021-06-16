@@ -16,12 +16,12 @@ Including another URLconf
 from games import views
 from django.contrib import admin
 from django.urls import path, re_path
+from django.views.generic import TemplateView
 
 urlpatterns = [
     path('', views.index),
-    path('about/', views.about),
-    path('contact/', views.contact),
-    path('details/', views.details),
+    re_path(r'^about', TemplateView.as_view(template_name="about.html")),
+    re_path(r'^contact', TemplateView.as_view(template_name="contact.html")),
     path('404/', views.m404),
 ]
 
