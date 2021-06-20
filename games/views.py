@@ -1,11 +1,18 @@
 from django.shortcuts import render
 from django.http import *
 from django.template.response import TemplateResponse
+from .forms import UserForm
 
 def index(request):
-    langs = ["English", "German", "French", "Spanish", "Chinese"]
-    return render(request, "index.html", context={"langs": langs})
-
+    userform = UserForm()
+    if request.method == "POST":
+        userform = UserForm(request.POST)
+        if userform.is_valid():
+            name = request.POST.get("name")
+            age = request.POST.get("age")
+            email = request.POST.get("email")
+            return HttpResponse("<h2>Hello, {0}. </br> Your age is {1} and ur email is {2}</h2>".format(name, age, email))
+    return render(request, "index.html", {"form": userform})
 
 """def index(request):
     header = "Personal Data"                    # обычная переменная
