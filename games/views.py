@@ -2,8 +2,52 @@ from django.shortcuts import render
 from django.http import *
 from django.template.response import TemplateResponse
 from .forms import UserForm
+from .models import Person
 
+
+# получение данных из бд
 def index(request):
+    people = Person.objects.all
+    return render(request, "index.html", {"people": people})
+
+
+# сохранение данных в бд
+def create(request):
+    if request.method == "POST":
+        tom = Person()
+        tom.name = request.POST.get("name")
+        tom.age = request.POST.get("age")
+        tom.save()
+    return HttpResponseRedirect("/")
+
+
+# изменение данных в бд
+def edit(request, id):
+    try:
+        person = Person.objects.get(id=id)
+
+        if request.method == "POST":
+            person.name = request.POST.get("name")
+            person.age = request.POST.get("age")
+            person.save()
+            return HttpResponseRedirect("/")
+        else:
+            return render(request, "edit.html", {"person": person})
+    except Person.DoesNotExist:
+        return HttpResponseNotFound("<h2>Person not found</h2>")
+
+
+# удаление данных в бд
+def delete(request, id):
+    try:
+        person = Person.objects.get(id=id)
+        person.delete()
+        return HttpResponseRedirect("/")
+    except Person.DoesNotExist:
+        return HttpResponseRedirect("<h2>Person not found</h2>")
+
+
+"""def index(request):
     userform = UserForm()
     if request.method == "POST":
         userform = UserForm(request.POST)
@@ -13,7 +57,7 @@ def index(request):
             email = request.POST.get("email")
             return HttpResponse("<h2>Hello, {0}. </br> Your age is {1} and ur email is {2}</h2>".format(name, age, email))
     return render(request, "index.html", {"form": userform})
-
+"""
 """def index(request):
     header = "Personal Data"                    # обычная переменная
     langs = ["English", "German", "Spanish"]    # массив
@@ -23,43 +67,3 @@ def index(request):
     data = {"header": header, "langs": langs, "user": user, "address": addr}
     return TemplateResponse(request,  "index.html", data)"""
  
-
-def products(request, productid):
-    category = request.GET.get("cat", "")
-    output = "<h2>Product № {0}  Category: {1}</h2>".format(productid, category)
-    return HttpResponse(output)
-
-
-def users(request):
-    id = request.GET.get("id", 1)
-    name = request.GET.get("name", "qweqe")
-    output = "<h2>User</h2><h3>id: {0}  name: {1}</h3>".format(id, name)
-    return HttpResponse(output)
-
-
-def m304(request):
-    return HttpResponseNotModified()
- 
-
-def m400(request):
-    return HttpResponseBadRequest("<h2>Bad Request</h2>")
-
-
-def m403(request):
-    return HttpResponseForbidden("<h2>Forbidden</h2>")
-
-
-def m404(request):
-    return HttpResponseNotFound()
-
-
-def m405(request):
-    return HttpResponseNotAllowed("<h2>Method is not allowed</h2>")
-
-
-def m410(request):
-    return HttpResponseGone("<h2>Content is no longer here</h2>")
-
-
-def m500(request):
-    return HttpResponseServerError("<h2>Something is wrong</h2>")
