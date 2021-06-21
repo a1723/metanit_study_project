@@ -20,9 +20,11 @@ from django.views.generic import TemplateView
 
 urlpatterns = [
     path('', views.index),
+    path('create', views.create),
+    path('edit/<int:id>', views.edit),
+    path('delete/<int:id>', views.delete),        
     re_path(r'^about', TemplateView.as_view(template_name="about.html")),
     re_path(r'^contact', TemplateView.as_view(template_name="contact.html")),
-    path('404/', views.m404),
 ]
 
 """ path('', views.index, name='home'),
