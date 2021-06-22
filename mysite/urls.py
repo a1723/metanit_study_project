@@ -20,7 +20,7 @@ from django.views.generic import TemplateView
 
 urlpatterns = [
     path('', views.index),
-    path('create', views.create),
+    path('create/', views.create),
     path('edit/<int:id>', views.edit),
     path('delete/<int:id>', views.delete),        
     re_path(r'^about', TemplateView.as_view(template_name="about.html")),
